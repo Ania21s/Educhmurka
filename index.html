@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8fbff">
+  <meta name="description" content="Twórz fiszki do nauki angielskiego z tekstu lub zdjęcia.">
+  <title>EduChmurka — ucz się po swojemu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      font-family: "Nunito", "Avenir Next", ui-rounded, "Trebuchet MS", sans-serif;
+      color: #29374d;
+      background: #f8fbff;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      --muted: #8290a4;
+      --line: #e8edf5;
+      --blue: #a9d8f4;
+      --pink: #f2c5d6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(ellipse at 8% 12%, rgb(200 230 249 / 48%), transparent 29rem),
+        radial-gradient(ellipse at 94% 22%, rgb(249 220 233 / 45%), transparent 26rem),
+        #f8fbff;
+    }
+    button, textarea { font: inherit; }
+    button:focus-visible, textarea:focus-visible, input:focus-visible + .upload-inner {
+      outline: 3px solid rgb(91 165 212 / 38%);
+      outline-offset: 3px;
+    }
+    .shell { width: min(1060px, calc(100% - 44px)); margin: 0 auto; }
+    header {
+      min-height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; color: #34445c; text-decoration: none; font-size: 20px; font-weight: 900; letter-spacing: -.65px; }
+    svg { display: block; }
+    .brand-mark { width: 46px; height: 46px; flex: 0 0 auto; filter: drop-shadow(0 5px 7px rgb(111 155 189 / 16%)); }
+    .brand-mark svg { width: 100%; height: 100%; overflow: visible; }
+    .header-note { display: flex; gap: 8px; align-items: center; color: #8390a3; font-size: 13px; }
+    .header-note svg { width: 17px; height: 17px; color: #83b1d1; }
+    main { padding: 46px 0 60px; }
+    .welcome { max-width: 670px; margin: 0 auto 34px; text-align: center; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; margin: 0 0 17px;
+      border: 1px solid #fff; border-radius: 999px; background: rgb(255 255 255 / 75%);
+      color: #71819a; font-size: 12px; font-weight: 800; letter-spacing: .01em;
+      box-shadow: 0 4px 14px rgb(107 134 164 / 6%);
+    }
+    .eyebrow svg { width: 15px; height: 15px; color: #d997b3; }
+    h1 { margin: 0; color: #2d3b52; font-size: clamp(38px, 5.2vw, 55px); font-weight: 900; letter-spacing: -1.7px; line-height: 1.12; }
+    .gradient-text {
+      color: #70a6ca; background: linear-gradient(95deg, #68a8d1 8%, #d093af 95%);
+      background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .welcome-copy { max-width: 490px; margin: 15px auto 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
+    .creator { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(285px, .82fr); gap: 18px; }
+    .card {
+      border: 1px solid rgb(231 237 246 / 92%); border-radius: 23px;
+      background: rgb(255 255 255 / 90%); box-shadow: 0 13px 38px rgb(68 91 120 / 7%), 0 2px 6px rgb(68 91 120 / 3%);
+    }
+    .text-card { padding: 27px 28px 24px; }
+    .card-heading { display: flex; align-items: flex-start; gap: 13px; margin-bottom: 19px; }
+    .tile { display: grid; width: 43px; height: 43px; flex: 0 0 auto; place-items: center; border-radius: 15px; background: linear-gradient(145deg, #e1f3fd, #edf5fd); color: #5b9bc4; }
+    .tile svg { width: 21px; height: 21px; }
+    .heading-copy h2 { margin: 1px 0 4px; color: #35435a; font-size: 16px; font-weight: 800; letter-spacing: -.25px; }
+    .heading-copy p { margin: 0; color: #8995a8; font-size: 13px; line-height: 1.5; }
+    textarea {
+      display: block; width: 100%; min-height: 177px; resize: vertical; padding: 15px 16px;
+      border: 1px solid #e8edf4; border-radius: 15px; outline: none; background: #fcfdff;
+      color: #34445a; font-size: 14px; line-height: 1.65;
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+    textarea::placeholder { color: #a0aaba; }
+    textarea:focus { border-color: #b6d9ef; background: white; box-shadow: 0 0 0 4px rgb(188 224 244 / 25%); }
+    .footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
+    .hint { display: inline-flex; align-items: center; gap: 7px; color: #8b97a9; font-size: 12px; }
+    .hint svg { width: 15px; height: 15px; color: #87b6d5; }
+    .primary {
+      display: inline-flex; min-height: 47px; align-items: center; justify-content: center; gap: 9px;
+      padding: 0 19px; border: 0; border-radius: 14px;
+      background: linear-gradient(105deg, #86c3e6 0%, #a9cce9 50%, #e8b6ce 100%);
+      box-shadow: 0 7px 16px rgb(123 169 206 / 23%); color: white; cursor: pointer;
+      font-size: 14px; font-weight: 700; transition: transform .16s ease, box-shadow .16s ease, opacity .16s ease;
+    }
+    .primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 20px rgb(123 169 206 / 30%); }
+    .primary:disabled { cursor: not-allowed; opacity: .53; box-shadow: none; }
+    .primary svg { width: 17px; height: 17px; }
+    .photo-card {
+      display: flex; min-height: 100%; flex-direction: column; padding: 27px 25px 23px; overflow: hidden;
+      background: radial-gradient(ellipse at 100% 0%, rgb(250 228 237 / 68%), transparent 53%), linear-gradient(150deg, #fff, #fafaff);
+    }
+    .photo-card .tile { background: linear-gradient(145deg, #f9e8ef, #f4eefa); color: #c17d9b; }
+    .upload {
+      position: relative; display: grid; flex: 1; min-height: 205px; place-items: center; overflow: hidden;
+      padding: 20px; border: 1.5px dashed #e6c6d5; border-radius: 17px; background: rgb(255 255 255 / 67%);
+      text-align: center; transition: border-color .16s ease, background .16s ease, transform .16s ease;
+    }
+    .upload:hover, .upload.dragging { border-color: #c498b3; background: rgb(255 255 255 / 94%); }
+    .upload.dragging { transform: scale(1.01); }
+    .upload.has-preview { padding: 0; }
+    .file-input { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; cursor: pointer; opacity: 0; }
+    .upload-inner { display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+    .upload-icon { display: grid; width: 48px; height: 48px; margin-bottom: 12px; place-items: center; border-radius: 16px; background: linear-gradient(145deg, #e6f4fc, #f9e8ef); color: #9c8fb2; }
+    .upload-icon svg { width: 23px; height: 23px; }
+    .upload-title { color: #4d5a70; font-size: 14px; font-weight: 700; }
+    .upload-link { color: #779fc2; text-decoration: underline; text-underline-offset: 3px; }
+    .upload-caption { margin-top: 6px; color: #9aa5b5; font-size: 12px; }
+    .preview { display: block; width: 100%; height: 100%; min-height: 205px; object-fit: cover; }
+    .clear-photo {
+      position: absolute; z-index: 2; top: 10px; right: 10px; display: grid; width: 34px; height: 34px;
+      place-items: center; border: 1px solid #fff; border-radius: 50%; background: rgb(255 255 255 / 94%);
+      box-shadow: 0 3px 10px rgb(40 50 70 / 12%); color: #59677a; cursor: pointer; pointer-events: auto;
+    }
+    .clear-photo svg { width: 16px; height: 16px; }
+    .photo-caption { margin: 12px 0 0; color: #8d98aa; font-size: 12px; line-height: 1.55; }
+    .privacy { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 24px 0 0; color: #94a0b0; font-size: 12px; text-align: center; }
+    .privacy svg { width: 15px; height: 15px; flex: 0 0 auto; color: #91b6ce; }
+    .result { display: none; margin-top: 20px; padding: 22px 24px; }
+    .result.visible { display: block; animation: appear .28s ease both; }
+    .result-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
+    .result-head h2 { margin: 0; color: #35435a; font-size: 16px; }
+    .result-head span { color: #91a0b1; font-size: 12px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 11px; }
+    .flashcard { min-height: 112px; padding: 15px; border: 1px solid #e9edf4; border-radius: 15px; background: linear-gradient(145deg, #fbfdff, #fff9fc); }
+    .flashcard small { display: block; margin-bottom: 11px; color: #94a2b3; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .flashcard strong { display: block; color: #3c4a60; font-size: 15px; }
+    .flashcard p { margin: 5px 0 0; color: #8290a4; font-size: 13px; }
+    .status { min-height: 18px; margin: 10px 0 0; color: #be7795; font-size: 12px; }
+    @keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 740px) {
+      .shell { width: min(560px, calc(100% - 32px)); }
+      header { min-height: 72px; }
+      .header-note { font-size: 0; }
+      .header-note svg { width: 20px; height: 20px; }
+      main { padding: 34px 0 48px; }
+      .welcome { margin-bottom: 26px; }
+      .welcome-copy { padding: 0 8px; font-size: 14px; }
+      .creator { grid-template-columns: 1fr; gap: 14px; }
+      .photo-card { min-height: auto; }
+      .upload { min-height: 185px; }
+    }
+    @media (max-width: 480px) {
+      .shell { width: calc(100% - 26px); }
+      h1 { font-size: 39px; letter-spacing: -1.8px; }
+      .text-card, .photo-card { padding: 21px 18px; border-radius: 20px; }
+      textarea { min-height: 155px; padding: 14px; font-size: 13px; }
+      .footer { align-items: stretch; flex-direction: column; }
+      .primary { width: 100%; }
+      .hint { font-size: 11px; }
+      .result { padding: 19px 17px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="brand" href="#" aria-label="EduChmurka — strona główna">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 52 48" role="img" aria-label="Uśmiechnięta pastelowa chmurka">
+            <defs>
+              <linearGradient id="cloud-gradient" x1="7" y1="8" x2="43" y2="39" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#B9E3F8"/>
+                <stop offset=".56" stop-color="#D2E5F3"/>
+                <stop offset="1" stop-color="#F2C9DA"/>
+              </linearGradient>
+            </defs>
+            <path d="M15.1 39h22.2c6.2 0 10.2-4 10.2-9.2 0-4.8-3.6-8.6-8.7-9.1C37.6 12.3 31.3 6.5 23 6.5c-7.8 0-14 5.1-15.6 12.4C2.5 19.5-.5 23.2-.5 28c0 6.2 4.4 11 11 11h4.6Z" fill="url(#cloud-gradient)" stroke="white" stroke-width="2.2" stroke-linejoin="round"/>
+            <circle cx="18.7" cy="25.2" r="1.35" fill="#627F98"/>
+            <circle cx="31.7" cy="25.2" r="1.35" fill="#627F98"/>
+            <ellipse cx="15.5" cy="29.2" rx="2.4" ry="1.35" fill="#E9AFC5" opacity=".72"/>
+            <ellipse cx="34.8" cy="29.2" rx="2.4" ry="1.35" fill="#E9AFC5" opacity=".72"/>
+            <path d="M22 29c1.1 1.7 2.4 2.5 3.8 2.5s2.7-.8 3.8-2.5" fill="none" stroke="#71859A" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span>EduChmurka</span>
+      </a>
+      <span class="header-note">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5v2m0 13v2m8.5-8.5h-2m-13 0h-2m14.01-6.01-1.42 1.42M7.91 16.09l-1.42 1.42m11.02 0-1.42-1.42M7.91 7.91 6.49 6.49" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/></svg>
+        Twoja spokojna przestrzeń do nauki
+      </span>
+    </header>
+
+    <main>
+      <section class="welcome" aria-labelledby="welcome-title">
+        <p class="eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5.5c2.8-.9 5.2-.4 7 1.1 1.8-1.5 4.2-2 7-1.1v12c-2.8-.9-5.2-.4-7 1.1-1.8-1.5-4.2-2-7-1.1v-12Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 6.6v12" stroke="currentColor" stroke-width="1.5"/></svg>
+          Twoja chwila z angielskim
+        </p>
+        <h1 id="welcome-title">Nauka może być<br><span class="gradient-text">prostsza.</span></h1>
+        <p class="welcome-copy">Zamień swoje notatki w fiszki i ucz się we własnym tempie. Zacznij od tekstu albo zdjęcia.</p>
+      </section>
+
+      <section class="creator" aria-label="Tworzenie fiszek">
+        <form class="card text-card" id="flashcard-form">
+          <div class="card-heading">
+            <span class="tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13.5 4H6.75A1.75 1.75 0 0 0 5 5.75v12.5C5 19.22 5.78 20 6.75 20h10.5A1.75 1.75 0 0 0 19 18.25V9.5L13.5 4Z" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round"/><path d="M13 4v5.5h5.5M8.5 13h7m-7 3.5h7" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="heading-copy"><h2>Wklej tekst lub notatki</h2><p>Zamień ważne słówka i zwroty w fiszki.</p></div>
+          </div>
+          <label for="study-text" hidden>Tekst do zamiany na fiszki</label>
+          <textarea id="study-text" name="study-text" placeholder="Wklej fragment tekstu, listę słówek albo notatki z lekcji…"></textarea>
+          <div class="footer">
+            <span class="hint"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 11v5m0-8h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Najlepiej działa tekst z kilkoma zdaniami</span>
+            <button class="primary" id="generate" type="submit" disabled>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5.5 7.5h11a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 4.5h11a2 2 0 0 1 2 2v8M8 11h6m-6 3.5h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              Wygeneruj fiszki
+            </button>
+          </div>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </form>
+
+        <section class="card photo-card" aria-labelledby="photo-title">
+          <div class="card-heading">
+            <span class="tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="14" rx="2.5" stroke="currentColor" stroke-width="1.65"/><circle cx="9" cy="10" r="1.5" stroke="currentColor" stroke-width="1.5"/><path d="m5 16 4.2-4 3.2 3 2.4-2 4.2 4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="heading-copy"><h2 id="photo-title">A może zdjęcie?</h2><p>Notatki, podręcznik lub tablica.</p></div>
+          </div>
+          <div class="upload" id="upload">
+            <input class="file-input" id="photo" type="file" accept="image/*" aria-label="Dodaj zdjęcie do utworzenia fiszek">
+            <div class="upload-inner" id="upload-inner">
+              <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 15V4m0 0L8 8m4-4 4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 14v4.25c0 .97.78 1.75 1.75 1.75h10.5c.97 0 1.75-.78 1.75-1.75V14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+              <span class="upload-title">Upuść zdjęcie lub <span class="upload-link">wybierz plik</span></span>
+              <span class="upload-caption">JPG, PNG lub HEIC · maks. 10 MB</span>
+            </div>
+          </div>
+          <p class="photo-caption">Dodaj zdjęcie notatek, a przygotujemy z niego fiszki.</p>
+        </section>
+      </section>
+
+      <section class="card result" id="result" aria-live="polite" aria-label="Podgląd fiszek">
+        <div class="result-head"><h2>Twoje fiszki</h2><span id="result-count"></span></div>
+        <div class="cards" id="cards"></div>
+      </section>
+
+      <p class="privacy"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 5.5 5.8v5.7c0 4.4 2.7 7.8 6.5 9.5 3.8-1.7 6.5-5.1 6.5-9.5V5.8L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Twoje materiały są bezpieczne i służą tylko do nauki</p>
+    </main>
+  </div>
+
+  <script>
+    const text = document.querySelector("#study-text");
+    const generate = document.querySelector("#generate");
+    const form = document.querySelector("#flashcard-form");
+    const status = document.querySelector("#status");
+    const result = document.querySelector("#result");
+    const cards = document.querySelector("#cards");
+    const photo = document.querySelector("#photo");
+    const upload = document.querySelector("#upload");
+    const uploadInner = document.querySelector("#upload-inner");
+    let previewUrl = null;
+
+    text.addEventListener("input", () => {
+      generate.disabled = text.value.trim().length === 0;
+      status.textContent = "";
+    });
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const entries = text.value.split(/\n|[.!?]\s+/).map((part) => part.trim()).filter(Boolean);
+      if (!entries.length) return;
+      const selected = entries.slice(0, 6);
+      cards.replaceChildren(...selected.map((entry, index) => {
+        const [front, back] = entry.split(/\s*(?:—|–|:)\s*/, 2);
+        const card = document.createElement("article");
+        card.className = "flashcard";
+        const label = document.createElement("small");
+        label.textContent = `FISZKA ${String(index + 1).padStart(2, "0")}`;
+        const term = document.createElement("strong");
+        term.textContent = front;
+        card.append(label, term);
+        if (back) {
+          const meaning = document.createElement("p");
+          meaning.textContent = back;
+          card.append(meaning);
+        }
+        return card;
+      }));
+      const count = selected.length;
+      const noun = count === 1 ? "fiszka" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? "fiszki" : "fiszek";
+      document.querySelector("#result-count").textContent = `${count} ${noun} · podgląd prototypu`;
+      result.classList.add("visible");
+      status.textContent = "Podgląd gotowy — właściwe generowanie AI wymaga podłączenia usługi.";
+      result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
+    function clearPhoto() {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = null;
+      photo.value = "";
+      upload.classList.remove("has-preview");
+      uploadInner.innerHTML = `
+        <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 15V4m0 0L8 8m4-4 4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 14v4.25c0 .97.78 1.75 1.75 1.75h10.5c.97 0 1.75-.78 1.75-1.75V14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+        <span class="upload-title">Upuść zdjęcie lub <span class="upload-link">wybierz plik</span></span>
+        <span class="upload-caption">JPG, PNG lub HEIC · maks. 10 MB</span>`;
+    }
+
+    function showPhoto(file) {
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        status.textContent = "Wybierz plik graficzny, np. JPG lub PNG.";
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        status.textContent = "Zdjęcie jest za duże. Maksymalny rozmiar to 10 MB.";
+        photo.value = "";
+        return;
+      }
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = URL.createObjectURL(file);
+      upload.classList.add("has-preview");
+      uploadInner.innerHTML = `<img class="preview" src="${previewUrl}" alt="Podgląd dodanego zdjęcia"><button class="clear-photo" type="button" aria-label="Usuń dodane zdjęcie"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>`;
+      uploadInner.querySelector(".clear-photo").addEventListener("click", (event) => {
+        event.stopPropagation();
+        clearPhoto();
+      });
+      status.textContent = "Zdjęcie dodane — podgląd działa, generowanie AI wymaga podłączenia usługi.";
+    }
+
+    photo.addEventListener("change", () => showPhoto(photo.files[0]));
+    upload.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      upload.classList.add("dragging");
+    });
+    upload.addEventListener("dragleave", (event) => {
+      if (!upload.contains(event.relatedTarget)) upload.classList.remove("dragging");
+    });
+    upload.addEventListener("drop", (event) => {
+      event.preventDefault();
+      upload.classList.remove("dragging");
+      showPhoto(event.dataTransfer.files[0]);
+    });
+    window.addEventListener("beforeunload", () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    });
+  </script>
+</body>
+</html>
